@@ -17,7 +17,7 @@ mongoose.connect("mongodb+srv://gabriele:qyun36zrbAZUYtv@myhealthcaredb-mpvmb.mo
 
 
 //IP variable for heroku deploy
-app.listen(3000, function(){
+app.listen(process.env.PORT || 3000, function(){
     console.log("Server running on port 3000");
 });
 
