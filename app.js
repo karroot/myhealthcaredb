@@ -1,42 +1,22 @@
-const Express = require("express");
-const BodyParser = require("body-parser");
-const MongoClient = require("mongodb").MongoClient;
-const ObjectId = require("mongodb").ObjectID;
-//check
-const CONNECTION_URL = "mongodb+srv://gabriele:qyun36zrbAZUYtv@myhealthcaredb-mpvmb.mongodb.net/test?retryWrites=true&w=majority";
-const DATABASE_NAME = "example";
+var express = require('express');
+var mongoose = require('mongoose');
+var bodyParser = require('body-parser');
+//var Applicant = require('./models/applicants');
+//var sendAppliedEmail = require('./mail/index.js');
 
-var app = Express();
+var app = express();
+app.set('view engine', 'ejs');
+app.use(express.static(__dirname + "/public"));
+app.use(express.static(__dirname + '/js'));
+var port = process.env.PORT || 3000;
 
-app.use(BodyParser.json());
-app.use(BodyParser.urlencoded({ extended: true }));
+var uri = "mongodb+srv://gabriele:qyun36zrbAZUYtv@myhealthcaredb-mpvmb.mongodb.net/test?retryWrites=true&w=majority";
 
-var database, collection;
-const db = process.env.MONGODB_URL;
 
-const connectDB = async () => {
-  try {
-    await mongoose.connect(db, {
-      useUnifiedTopology: true,
-      useNewUrlParser: true
-    });
-    console.log("MongoDB is Connected...");
-  } catch (err) {
-    console.error(err.message);
-    process.exit(1);
-  }
-};
+mongoose.connect(uri, {useNewUrlParser: true});
+var db = mongoose.connection;
 
-app.listen(3000, () => {
-    MongoClient.connect(CONNECTION_URL, { useNewUrlParser: true }, (error, client) => {
-        if(error) {
-            throw error;
-        }
-        database = client.db(DATABASE_NAME);
-        collection = database.collection("people");
-        console.log("Connected to `" + DATABASE_NAME + "`!");
-    });
-});
+app.use(bodyParser.urlencoded({extended: true}));
 
 app.post("/person", (request, response) => {
     collection.insert(request.body, (error, result) => {
@@ -64,3 +44,6 @@ app.get("/person/:id", (request, response) => {
         response.send(result);
     });
 });
+
+
+const CONNECTION_URL = "mongodb+srv://gabriele:qyun36zrbAZUYtv@myhealthcaredb-mpvmb.mongodb.net/test?retryWrites=true&w=majority";
