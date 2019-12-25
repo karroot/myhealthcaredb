@@ -12,6 +12,20 @@ app.use(BodyParser.json());
 app.use(BodyParser.urlencoded({ extended: true }));
 
 var database, collection;
+const db = process.env.MONGODB_URL;
+
+const connectDB = async () => {
+  try {
+    await mongoose.connect(db, {
+      useUnifiedTopology: true,
+      useNewUrlParser: true
+    });
+    console.log("MongoDB is Connected...");
+  } catch (err) {
+    console.error(err.message);
+    process.exit(1);
+  }
+};
 
 app.listen(3000, () => {
     MongoClient.connect(CONNECTION_URL, { useNewUrlParser: true }, (error, client) => {
