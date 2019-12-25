@@ -1,31 +1,22 @@
-var express = require('express');
-var mongo = require("mongodb").MongoClient;
+var express  = require("express");
+var app      = express();
+var mongoose =require("mongoose");
 
-var dataURL = process.env.MONGODB_URI;
 
-var app = express();
 
-app.get('/', function (req, res) {
-    
-    res.writeHead(200, {'content-type':'application/JSON'});
-    
-    mongo.connect(dataURL, function(err, db) {
-       if (err) throw err;
-       
-       var collection = db.collection('data');
-       
-       collection.insert({
-           "key" :"test"
-       }, function(err, data) {
-          if (err) throw err;
-          
-          db.close();
-          res.end(JSON.stringify(data["ops"][0]));
-       });
-    });
-    
-})
 
-app.listen(process.env.PORT, function () {
-  console.log('Example app listening on port!');
-})
+var bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({extended: true}));
+
+
+
+//DATABASEURL variable for mongoAtlas
+mongoose.connect("mongodb+srv://gabriele:qyun36zrbAZUYtv@myhealthcaredb-mpvmb.mongodb.net/test?retryWrites=true&w=majority" || "mongodb://localhost:27017/mongoDemo_v7", { useNewUrlParser: true }).catch(error => handleError(error));
+
+
+
+
+//IP variable for heroku deploy
+app.listen(process.env.PORT || 3000, function(){
+    console.log("Server running on port 3000");
+});
