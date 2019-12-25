@@ -1,49 +1,22 @@
-var express = require('express');
-var mongoose = require('mongoose');
-var bodyParser = require('body-parser');
-//var Applicant = require('./models/applicants');
-//var sendAppliedEmail = require('./mail/index.js');
-
-var app = express();
-app.set('view engine', 'ejs');
-app.use(express.static(__dirname + "/public"));
-app.use(express.static(__dirname + '/js'));
-var port = process.env.PORT || 3000;
-
-var uri = "mongodb+srv://gabriele:qyun36zrbAZUYtv@myhealthcaredb-mpvmb.mongodb.net/test?retryWrites=true&w=majority";
-
-
-mongoose.connect(uri, {useNewUrlParser: true});
-var db = mongoose.connection;
-
-app.use(bodyParser.urlencoded({extended: true}));
-
-app.post("/person", (request, response) => {
-    collection.insert(request.body, (error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result.result);
-    });
-});
-
-app.get("/people", (request, response) => {
-    collection.find({}).toArray((error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result);
-    });
-});
-
-app.get("/person/:id", (request, response) => {
-    collection.findOne({ "_id": new ObjectId(request.params.id) }, (error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result);
-    });
-});
-
+const express = require("express");
+const BodyParser = require("body-parser");
+const mongoose = require('mongoose');
 
 const CONNECTION_URL = "mongodb+srv://gabriele:qyun36zrbAZUYtv@myhealthcaredb-mpvmb.mongodb.net/test?retryWrites=true&w=majority";
+const DATABASE_NAME = "example";
+
+var app = express();
+var PORT = process.env.PORT || 8080;
+
+app.use(BodyParser.json());
+app.use(BodyParser.urlencoded({ extended: true }));
+
+
+mongoose.connect(process.env.MONGODB_URL || CONNECTION_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+} );
+
+mongoose.connection.on('connected',() =>{
+    console.log('connesso');
+});
