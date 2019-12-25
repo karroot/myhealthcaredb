@@ -1,22 +1,31 @@
-const express = require("express");
-const BodyParser = require("body-parser");
-const mongoose = require('mongoose');
+var express = require('express');
+var mongo = require("mongodb").MongoClient;
 
-const CONNECTION_URL = "mongodb+srv://gabriele:qyun36zrbAZUYtv@myhealthcaredb-mpvmb.mongodb.net/test?retryWrites=true&w=majority";
-const DATABASE_NAME = "example";
+var dataURL = process.env.MONGODB_URI;
 
 var app = express();
-var PORT = process.env.PORT || 8080;
 
-app.use(BodyParser.json());
-app.use(BodyParser.urlencoded({ extended: true }));
+app.get('/', function (req, res) {
+    
+    res.writeHead(200, {'content-type':'application/JSON'});
+    
+    mongo.connect(dataURL, function(err, db) {
+       if (err) throw err;
+       
+       var collection = db.collection('data');
+       
+       collection.insert({
+           "key" :"test"
+       }, function(err, data) {
+          if (err) throw err;
+          
+          db.close();
+          res.end(JSON.stringify(data["ops"][0]));
+       });
+    });
+    
+})
 
-
-mongoose.connect(process.env.MONGODB_URL || CONNECTION_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-} );
-
-mongoose.connection.on('connected',() =>{
-    console.log('connesso');
-});
+app.listen(process.env.PORT, function () {
+  console.log('Example app listening on port!');
+})

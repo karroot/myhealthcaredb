@@ -2,7 +2,7 @@
   "name": "myhealthcaredb",
   "version": "1.0.0",
   "description": "ok",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "prestart": "npm install",
     "start": "node app.js"
