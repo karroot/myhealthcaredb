@@ -2,8 +2,10 @@ const Express = require("express");
 const BodyParser = require("body-parser");
 const MongoClient = require("mongodb").MongoClient;
 const ObjectId = require("mongodb").ObjectID;
-
-const CONNECTION_URL = "mongodb+srv://gabriele:qyun36zrbAZUYtv@myhealthcaredb-mpvmb.mongodb.net/test?retryWrites=true&w=majority";
+const dotenv = require('dotenv');
+dotenv.config({path: 'variable.env'});
+console.log(process.env.MONGODB_URL);
+const CONNECTION_URL = process.env.MONGODB_URL;
 const DATABASE_NAME = "example";
 var port = process.env.PORT || 3000;
 var app = Express();
