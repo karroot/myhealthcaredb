@@ -15,10 +15,8 @@ var database, collection;
 app.get('/', function (req, res) {
     res.send(JSON.stringify({ Hello: 'World'}));
    });
-app.listen(port, function () {
-    console.log(`Example app listening on port !`);
-   });
-app.listen(3000, () => {
+
+app.listen(port, () => {
     MongoClient.connect(CONNECTION_URL, { useNewUrlParser: true }, (error, client) => {
         if(error) {
             throw error;
