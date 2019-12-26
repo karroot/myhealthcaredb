@@ -13,7 +13,7 @@ var app = Express();
 app.use(BodyParser.json());
 app.use(BodyParser.urlencoded({ extended: true }));
 
-var database, collection;
+var database, collectionPatient;
 app.get('/', function (req, res) {
     res.sendFile('index.html', {root: __dirname })
    });
@@ -24,8 +24,9 @@ app.listen(port, () => {
             throw error;
         }
         database = client.db(DATABASE_NAME);
-        collection = database.collection("patients");
-        collection2 = database.collection("workers");
+        collectionPatient = database.collection("patients");
+        collectionWorker = database.collection("workers");
+        collectionIot = database.collection("iot");
         console.log("Connected to `" + DATABASE_NAME + "`!");
     });
 });
@@ -33,7 +34,7 @@ app.listen(port, () => {
 //PATIENTS
 
 app.post("/patients", (request, response) => {
-    collection.insert(request.body, (error, result) => {
+    collectionPatient.insert(request.body, (error, result) => {
         if(error) {
             return response.status(500).send(error);
         }
@@ -42,7 +43,7 @@ app.post("/patients", (request, response) => {
 });
 
 app.get("/patients", (request, response) => {
-    collection.find({}).toArray((error, result) => {
+    collectionPatient.find({}).toArray((error, result) => {
         if(error) {
             return response.status(500).send(error);
         }
@@ -51,7 +52,7 @@ app.get("/patients", (request, response) => {
 });
 
 app.get("/patient/:id", (request, response) => {
-    collection.findOne({ "_id": new ObjectId(request.params.id) }, (error, result) => {
+    collectionPatient.findOne({ "_id": new ObjectId(request.params.id) }, (error, result) => {
         if(error) {
             return response.status(500).send(error);
         }
@@ -62,7 +63,7 @@ app.get("/patient/:id", (request, response) => {
 
 //WORKERS
 app.get("/workers", (request, response) => {
-    collection2.find({}).toArray((error, result) => {
+    collectionWorker.find({}).toArray((error, result) => {
         if(error) {
             return response.status(500).send(error);
         }
@@ -71,7 +72,7 @@ app.get("/workers", (request, response) => {
 });
 
 app.get("/worker/:id", (request, response) => {
-    collection2.findOne({ "_id": new ObjectId(request.params.id) }, (error, result) => {
+    collectionWorker.findOne({ "_id": new ObjectId(request.params.id) }, (error, result) => {
         if(error) {
             return response.status(500).send(error);
         }
@@ -79,3 +80,62 @@ app.get("/worker/:id", (request, response) => {
     });
 });
 
+//IOT
+app.get("/iot", (request, response) => {
+    collectionIot.find({}).toArray((error, result) => {
+        if(error) {
+            return response.status(500).send(error);
+        }
+        response.send(result);
+    });
+});
+
+app.get("/iot/:id", (request, response) => {
+    collectionIot.findOne({ "_id": new ObjectId(request.params.id) }, (error, result) => {
+        if(error) {
+            return response.status(500).send(error);
+        }
+        response.send(result);
+    });
+});
+
+app.get("/patients/iot", (request, response) => {
+
+    collectionIot.aggregate( [{
+        $lookup:
+        {
+            from:"iot",
+            localField:"patient_id",
+            foreignField: "_id",
+            as:"patient_iot" 
+        }
+    }]).toArray( (error, result) => {
+        if(error) {
+            return response.status(500).send(error);
+        }
+        response.send(result);
+    });
+});
+
+
+app.get("/iot/patient/:id", (request, response) => {
+    collectionIot.find({ "iotDevice.patient_id": request.params.id }).toArray(function(error, result){
+        if(error) {
+            return response.status(500).send(error);
+        }
+        console.log(result);
+        response.send(result);
+    });
+});
+
+
+
+app.get("/iot/device/:id", (request, response) => {
+    collectionIot.find({ "iotDevice.id": request.params.id }).toArray(function(error, result){
+        if(error) {
+            return response.status(500).send(error);
+        }
+        console.log(result);
+        response.send(result);
+    });
+});
