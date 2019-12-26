@@ -15,7 +15,7 @@ app.use(BodyParser.urlencoded({ extended: true }));
 
 var database, collection;
 app.get('/', function (req, res) {
-    res.send(JSON.stringify({ Hello: 'World'}));
+    res.sendFile('index.html', {root: __dirname })
    });
 
 app.listen(port, () => {
