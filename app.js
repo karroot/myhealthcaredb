@@ -24,12 +24,12 @@ app.listen(port, () => {
             throw error;
         }
         database = client.db(DATABASE_NAME);
-        collection = database.collection("people");
+        collection = database.collection("patients");
         console.log("Connected to `" + DATABASE_NAME + "`!");
     });
 });
 
-app.post("/person", (request, response) => {
+app.post("/patients", (request, response) => {
     collection.insert(request.body, (error, result) => {
         if(error) {
             return response.status(500).send(error);
@@ -38,7 +38,7 @@ app.post("/person", (request, response) => {
     });
 });
 
-app.get("/people", (request, response) => {
+app.get("/patients", (request, response) => {
     collection.find({}).toArray((error, result) => {
         if(error) {
             return response.status(500).send(error);
@@ -47,7 +47,7 @@ app.get("/people", (request, response) => {
     });
 });
 
-app.get("/person/:id", (request, response) => {
+app.get("/patient/:id", (request, response) => {
     collection.findOne({ "_id": new ObjectId(request.params.id) }, (error, result) => {
         if(error) {
             return response.status(500).send(error);
