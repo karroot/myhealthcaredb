@@ -27,20 +27,13 @@ app.listen(port, () => {
         collectionPatient = database.collection("patients");
         collectionWorker = database.collection("workers");
         collectionIot = database.collection("iot");
+        collectionIotDev = database.collection("iotDevices");
         console.log("Connected to `" + DATABASE_NAME + "`!");
     });
 });
 
 //PATIENTS
 
-app.post("/patients", (request, response) => {
-    collectionPatient.insert(request.body, (error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result.result);
-    });
-});
 
 app.get("/patients", (request, response) => {
     collectionPatient.find({}).toArray((error, result) => {
@@ -56,6 +49,36 @@ app.get("/patient/:id", (request, response) => {
         if(error) {
             return response.status(500).send(error);
         }
+        response.send(result);
+    });
+});
+
+app.get("/patient/blood/:id", (request, response) => {
+    collectionPatient.find({ "user.bloodType": request.params.id }).toArray(function(error, result){
+        if(error) {
+            return response.status(500).send(error);
+        }
+        console.log(result);
+        response.send(result);
+    });
+});
+
+app.get("/patient/job/:id", (request, response) => {
+    collectionPatient.find({ "user.job": request.params.id }).toArray(function(error, result){
+        if(error) {
+            return response.status(500).send(error);
+        }
+        console.log(result);
+        response.send(result);
+    });
+});
+
+app.get("/patient/profile/:id", (request, response) => {
+    collectionPatient.find({ "user.profile": request.params.id }).toArray(function(error, result){
+        if(error) {
+            return response.status(500).send(error);
+        }
+        console.log(result);
         response.send(result);
     });
 });
@@ -98,7 +121,7 @@ app.get("/iot/:id", (request, response) => {
         response.send(result);
     });
 });
-
+/* nope
 app.get("/patients/iot", (request, response) => {
 
     collectionIot.aggregate( [{
@@ -116,7 +139,7 @@ app.get("/patients/iot", (request, response) => {
         response.send(result);
     });
 });
-
+*/
 
 app.get("/iot/patient/:id", (request, response) => {
     collectionIot.find({ "iotDevice.patient_id": request.params.id }).toArray(function(error, result){
@@ -131,7 +154,7 @@ app.get("/iot/patient/:id", (request, response) => {
 
 
 app.get("/iot/device/:id", (request, response) => {
-    collectionIot.find({ "iotDevice.id": request.params.id }).toArray(function(error, result){
+    collectionIot.find({ "iotDevices.id": request.params.id }).toArray(function(error, result){
         if(error) {
             return response.status(500).send(error);
         }
@@ -139,3 +162,27 @@ app.get("/iot/device/:id", (request, response) => {
         response.send(result);
     });
 });
+
+
+
+//IOT DEVICE
+app.get("/iotDevices", (request, response) => {
+    collectionIotDev.find({}).toArray((error, result) => {
+        if(error) {
+            return response.status(500).send(error);
+        }
+        response.send(result);
+    });
+});
+
+app.get("/iotDevice/:id", (request, response) => {
+    collectionIotDev.findOne({ "_id": new ObjectId(request.params.id) }, (error, result) => {
+        if(error) {
+            return response.status(500).send(error);
+        }
+        response.send(result);
+    });
+});
+
+
+
