@@ -5,28 +5,57 @@
     <body>
         <h1 style="color: #5e9ca0;"></h1>
         <h1 style="color: #5e9ca0;">Welcome to MyhealthCare database</h1>
-        <h2 style="color: #2e6c80;">How to quey the database:</h2>
-        <p>use the REST way:</p>
-        <p><a href="https://myhealthcaredb.herokuapp.com/patients">https://myhealthcaredb.herokuapp.com/patients</a> for a list of all patients</p>
-        <p><a href="https://myhealthcaredb.herokuapp.com/patient/{insertID}">https://myhealthcaredb.herokuapp.com/patient/{insertID}</a> to search for a particular patient</p>
-        <p><a href="https://myhealthcaredb.herokuapp.com/patient/blood/{insertID}">https://myhealthcaredb.herokuapp.com/patient/blood/{insertID}</a> to search for a patient with a particular blood type</p>
-        <p><a href="https://myhealthcaredb.herokuapp.com/patient/profile/{insertID}">https://myhealthcaredb.herokuapp.com/patient/profile/{insertID}</a> to search for a patient with a particular profile</p>
-        <p><a href="https://myhealthcaredb.herokuapp.com/patient/job/{insertID}">https://myhealthcaredb.herokuapp.com/patient/job/{insertID}</a> to search for a patient with a particular job</p>
-       
-        <p>&nbsp;</p>
-        <p><a href="https://myhealthcaredb.herokuapp.com/workers">https://myhealthcaredb.herokuapp.com/workers</a> for a list of all workers</p>
-        <p><a href="https://myhealthcaredb.herokuapp.com/worker/{insertID}">https://myhealthcaredb.herokuapp.com/worker/{insertID}</a> to search for a particular worker</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p><a href="https://myhealthcaredb.herokuapp.com/iot">https://myhealthcaredb.herokuapp.com/iot</a> for a list of all iot data</p>
-        <p><a href="https://myhealthcaredb.herokuapp.com/iot/{insertID}">https://myhealthcaredb.herokuapp.com/iot/{insertID}</a> to search for a iot data</p>
-        <p><a href="https://myhealthcaredb.herokuapp.com/iot/device/{insertID}">https://myhealthcaredb.herokuapp.com/iot/device/{insertID}</a> to search for a iot device</p>   
-        <p><a href="https://myhealthcaredb.herokuapp.com/iot/patient/{insertID}">https://myhealthcaredb.herokuapp.com/iot/patient/{insertID}</a> to search for a iot data by user</p>
-        <p>&nbsp;</p>
-        <p><a href="https://myhealthcaredb.herokuapp.com/iotDevices">https://myhealthcaredb.herokuapp.com/iotDevices</a> for a list of all iot ddevices</p>
-        <p><a href="https://myhealthcaredb.herokuapp.com/iotDevice/{insertID}">https://myhealthcaredb.herokuapp.com/iotDevice/{insertID}</a> to search for a iot device</p>
- 
+
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Search Bar</title>
+        </head>
+        <body>
+            <h1>Search Bar</h1>
+            <form id="searchForm">
+                <input type="text" id="searchQuery" placeholder="Enter your search query">
+                <input type="submit" value="Search">
+            </form>
+        
+            <div id="searchResults">
+                <!-- Search results will be displayed here -->
+            </div>
+        
+            <script>
+                // Function to handle form submission
+                document.getElementById('searchForm').addEventListener('submit', function(event) {
+                    event.preventDefault(); // Prevent the form from submitting the traditional way
+        
+                    // Get the search query from the input field
+                    const searchQuery = document.getElementById('searchQuery').value;
+        
+                    // Define the base URL you want to call
+                    const baseUrl = 'https://clinquant-lebkuchen-997869.netlify.app/patient/'; // Replace with your desired URL
+        
+                    // Construct the full URL with the search query
+                    const fullUrl = baseUrl + encodeURIComponent(searchQuery);
+        
+                    // Redirect the user to the search results page
+                    window.location.href = fullUrl;
+                });
+            </script>
+        </body>
+        </html>
+        
+
+
+
+
+
+
+
+
+
+
+        <br>
+        <br>
     </body>
     
 

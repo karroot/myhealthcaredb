@@ -1,10 +1,8 @@
 const Express = require("express");
 const BodyParser = require("body-parser");
-const MongoClient = require("mongodb").MongoClient;
-const ObjectId = require("mongodb").ObjectID;
+const fs = require("fs"); // Include the fs module to read the JSON file
 const dotenv = require('dotenv');
 dotenv.config({path: 'variable.env'});
-console.log(process.env.MONGODB_URL);
 const CONNECTION_URL = process.env.MONGODB_URL;
 const DATABASE_NAME = "example";
 var port = process.env.PORT || 3000;
@@ -13,176 +11,83 @@ var app = Express();
 app.use(BodyParser.json());
 app.use(BodyParser.urlencoded({ extended: true }));
 
-var database, collectionPatient;
+// Read the example.json file
+const data = JSON.parse(fs.readFileSync('example.json', 'utf8'));
+
 app.get('/', function (req, res) {
     res.sendFile('index.html', {root: __dirname })
-   });
+});
 
 app.listen(port, () => {
-    MongoClient.connect(CONNECTION_URL, { useNewUrlParser: true }, (error, client) => {
-        if(error) {
-            throw error;
-        }
-        database = client.db(DATABASE_NAME);
-        collectionPatient = database.collection("patients");
-        collectionWorker = database.collection("workers");
-        collectionIot = database.collection("iot");
-        collectionIotDev = database.collection("iotDevices");
-        console.log("Connected to `" + DATABASE_NAME + "`!");
-    });
+    console.log("Server is running on port " + port);
 });
 
 //PATIENTS
-
-
 app.get("/patients", (request, response) => {
-    collectionPatient.find({}).toArray((error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result);
-    });
+    console.log(data[0]._id)
+    response.send(data); // Send patients data from the JSON file
 });
 
 app.get("/patient/:id", (request, response) => {
-    collectionPatient.findOne({ "_id": new ObjectId(request.params.id) }, (error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result);
-    });
+    for (let key of Object.keys(data)) {    
+    if (data[key]._id === request.params.id) 
+        response.send(data[key]);
+    }
+    if (!patient) 
+        return response.status(404).send("Patient not found");
+    response.send(patient);
 });
 
 app.get("/patient/blood/:id", (request, response) => {
-    collectionPatient.find({ "user.bloodType": request.params.id }).toArray(function(error, result){
-        if(error) {
-            return response.status(500).send(error);
-        }
-        console.log(result);
-        response.send(result);
-    });
+    const filteredPatients = data.patients.filter((p) => p.user.bloodType === request.params.id);
+    response.send(filteredPatients);
 });
 
 app.get("/patient/job/:id", (request, response) => {
-    collectionPatient.find({ "user.job": request.params.id }).toArray(function(error, result){
-        if(error) {
-            return response.status(500).send(error);
-        }
-        console.log(result);
-        response.send(result);
-    });
+    const filteredPatients = data.patients.filter((p) => p.user.job === request.params.id);
+    response.send(filteredPatients);
 });
 
 app.get("/patient/profile/:id", (request, response) => {
-    collectionPatient.find({ "user.profile": request.params.id }).toArray(function(error, result){
-        if(error) {
-            return response.status(500).send(error);
-        }
-        console.log(result);
-        response.send(result);
-    });
+    const filteredPatients = data.patients.filter((p) => p.user.profile === request.params.id);
+    response.send(filteredPatients);
 });
 
-
-//WORKERS
+// WORKERS
 app.get("/workers", (request, response) => {
-    collectionWorker.find({}).toArray((error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result);
-    });
+    response.send(data.workers); // Send workers data from the JSON file
 });
 
 app.get("/worker/:id", (request, response) => {
-    collectionWorker.findOne({ "_id": new ObjectId(request.params.id) }, (error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result);
-    });
+    const worker = data.workers.find((w) => w._id === request.params.id);
+    if (!worker) {
+        return response.status(404).send("Worker not found");
+    }
+    response.send(worker);
 });
 
-//IOT
+// IOT
 app.get("/iot", (request, response) => {
-    collectionIot.find({}).toArray((error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result);
-    });
+    response.send(data.iot); // Send iot data from the JSON file
 });
 
 app.get("/iot/:id", (request, response) => {
-    collectionIot.findOne({ "_id": new ObjectId(request.params.id) }, (error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result);
-    });
-});
-/* nope
-app.get("/patients/iot", (request, response) => {
-
-    collectionIot.aggregate( [{
-        $lookup:
-        {
-            from:"iot",
-            localField:"patient_id",
-            foreignField: "_id",
-            as:"patient_iot" 
-        }
-    }]).toArray( (error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result);
-    });
-});
-*/
-
-app.get("/iot/patient/:id", (request, response) => {
-    collectionIot.find({ "iotDevice.patient_id": request.params.id }).toArray(function(error, result){
-        if(error) {
-            return response.status(500).send(error);
-        }
-        console.log(result);
-        response.send(result);
-    });
+    const iotRecord = data.iot.find((iot) => iot._id === request.params.id);
+    if (!iotRecord) {
+        return response.status(404).send("IOT record not found");
+    }
+    response.send(iotRecord);
 });
 
-
-
-app.get("/iot/device/:id", (request, response) => {
-    collectionIot.find({ "iotDevices.id": request.params.id }).toArray(function(error, result){
-        if(error) {
-            return response.status(500).send(error);
-        }
-        console.log(result);
-        response.send(result);
-    });
-});
-
-
-
-//IOT DEVICE
+// IOT DEVICE
 app.get("/iotDevices", (request, response) => {
-    collectionIotDev.find({}).toArray((error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result);
-    });
+    response.send(data.iotDevices); // Send iotDevices data from the JSON file
 });
 
 app.get("/iotDevice/:id", (request, response) => {
-    collectionIotDev.findOne({ "_id": new ObjectId(request.params.id) }, (error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result);
-    });
+    const iotDevice = data.iotDevices.find((device) => device._id === request.params.id);
+    if (!iotDevice) {
+        return response.status(404).send("IOT device not found");
+    }
+    response.send(iotDevice);
 });
-
-
-
