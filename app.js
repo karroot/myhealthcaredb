@@ -1,6 +1,5 @@
 const Express = require("express");
 const BodyParser = require("body-parser");
-const fs = require("fs"); // Include the fs module to read the JSON file
 const dotenv = require('dotenv');
 dotenv.config({path: 'variable.env'});
 const CONNECTION_URL = process.env.MONGODB_URL;
