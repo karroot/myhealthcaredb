@@ -5,7 +5,7 @@ const ObjectId = require("mongodb").ObjectID;
 const dotenv = require('dotenv');
 dotenv.config({path: 'variable.env'});
 //console.log(process.env.MONGODB_URL);
-const CONNECTION_URL = process.env.MONGODB_URL;
+const CONNECTION_URL = "mongodb+srv://gabriele:LudFigo97@myhealthcaredb.o5pugek.mongodb.net/?retryWrites=true&w=majority";
 const DATABASE_NAME = "patients";
 var port = process.env.PORT || 3000;
 var app = Express();
