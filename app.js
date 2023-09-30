@@ -1,9 +1,10 @@
 const Express = require("express");
 const BodyParser = require("body-parser");
-const fs = require("fs"); // Include the fs module to read the JSON file
+const MongoClient = require("mongodb").MongoClient;
+const ObjectId = require("mongodb").ObjectID;
 const dotenv = require('dotenv');
 dotenv.config({path: 'variable.env'});
-console.log(process.env.MONGODB_URL);
+//console.log(process.env.MONGODB_URL);
 const CONNECTION_URL = process.env.MONGODB_URL;
 const DATABASE_NAME = "example";
 var port = process.env.PORT || 3000;
@@ -12,15 +13,13 @@ var app = Express();
 app.use(BodyParser.json());
 app.use(BodyParser.urlencoded({ extended: true }));
 
-// Read the example.json file
-const data = JSON.parse(fs.readFileSync('example.json', 'utf8'));
-
+var database, collectionPatient;
 app.get('/', function (req, res) {
     res.sendFile('index.html', {root: __dirname })
    });
 
 app.listen(port, () => {
-    MongoClient.connect(CONNECTION_URL, { useNewUrlParser: true }, (error, client) => {
+    MongoClient.connect(CONNECTION_URL, { useNewUrlParser: true, ssl: true }, (error, client) => {
         if(error) {
             throw error;
         }
@@ -184,6 +183,5 @@ app.get("/iotDevice/:id", (request, response) => {
         response.send(result);
     });
 });
-
 
 
