@@ -45,12 +45,13 @@ app.get("/patients", (request, response) => {
 });
 
 app.get("/patient/:id", (request, response) => {
-    collectionPatient.findOne({ "_id": new ObjectId(request.params.id) }, (error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result);
-    });
+    for (let key of Object.keys(data)) {    
+    if (data[key]._id === request.params.id) 
+        response.send(data[key]);
+    }
+    if (!patient) 
+        return response.status(404).send("Patient not found");
+    response.send(patient);
 });
 
 app.get("/patient/blood/:id", (request, response) => {
