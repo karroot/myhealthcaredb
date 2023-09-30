@@ -12,7 +12,7 @@ app.use(BodyParser.json());
 app.use(BodyParser.urlencoded({ extended: true }));
 
 // Read the example.json file
-const data = JSON.parse(fs.readFileSync('example.json', 'utf8'));
+const data = JSON.parse(process.env.EXAMPLE_JSON);
 
 app.get('/', function (req, res) {
     res.sendFile('index.html', {root: __dirname })
